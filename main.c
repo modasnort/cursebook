@@ -7,6 +7,8 @@
 
 int main() {
 
+	threads_init();
+	
 	ui_init();
 	console_init();
 
@@ -14,6 +16,8 @@ int main() {
 
 	console_shutdown();
 	ui_shutdown();
+	
+	threads_shutdown();
 
 	return EXIT_SUCCESS;
 }

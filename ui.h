@@ -5,8 +5,9 @@
 
 #include "types.h"
 
+#include <curses.h>
+
 #include <stdint.h>
-#include <ncurses.h>
 
 typedef struct uiblock {
 

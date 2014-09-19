@@ -9,23 +9,41 @@ struct thread *ui_thread;
 
 uint8_t need_refresh=0;
 
+mutex_t ui_mutex;
+
+void ui_lock() {
+	mutex_lock(&ui_mutex);
+}
+
+void ui_unlock() {
+	mutex_unlock(&ui_mutex);
+}
+
 void ui_thread_func(thread_t *thread)
 {
 
 	int i=0;
 	while (i++<10) {
+		
+		ui_lock();
 
 		if (need_refresh) {
 			need_refresh=0;
 			refresh();
 		}
 
+		ui_unlock();
+		
 		pi_usleep(100000);
 	}
 
 }
 
 void ui_init() {
+	
+	mutex_init(&ui_mutex);
+	
+	ui_lock();
 	
 	initscr();
 #if ALLOW_CONTROL_C
@@ -37,11 +55,18 @@ void ui_init() {
 	keypad(stdscr,TRUE);
 	
 	need_refresh=1;
+	ui_unlock();
 	ui_thread=thread_begin(ui_thread_func,NULL);
 }
 
 void ui_shutdown() {
+	ui_lock();
+	
 	endwin();
+	
+	ui_unlock();
+	
+	mutex_destroy(&ui_mutex);
 }
 
 void ui_warn(char *text) {
@@ -49,6 +74,7 @@ void ui_warn(char *text) {
 }
 
 void uiblock_resize(uiblock_t *uiblock,box_t constraints) {
+	ui_lock();
 	if (uiblock->window==NULL) {
 		uiblock->window=newwin(5,3,1,5);
 		box(uiblock->window,0,0);
@@ -59,6 +85,7 @@ void uiblock_resize(uiblock_t *uiblock,box_t constraints) {
 	else {
 		// ...
 	}
+	ui_unlock();
 }
 
 uiblock_t *uiblock_create(box_t constraints) {
@@ -73,17 +100,12 @@ uiblock_t *uiblock_create(box_t constraints) {
 }
 
 void uiblock_destroy(uiblock_t *uiblock) {
+	ui_lock();
 	wborder(uiblock->window, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
 	wrefresh(uiblock->window);
 	delwin(uiblock->window);
+	ui_unlock();
 	free(uiblock);
 }
 
-void uiblock_anchor(uiblock_t *uiblock,uint8_t anchor) {
-	
-}
-
-void uiblock_unanchor(uiblock_t *uiblock) {
-	
-}
 
