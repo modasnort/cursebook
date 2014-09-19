@@ -8,9 +8,7 @@ int main() {
 
 	ui_init();
 
-
 	threads_wait();
-
 
 	ui_shutdown();
 
