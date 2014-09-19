@@ -1,18 +1,27 @@
 cmake_minimum_required (VERSION 2.6)
 project (cursebook)
-# SET(CMAKE_MODULE_PATH ".")
 
-# SET( CMAKE_C_FLAGS  " ${CMAKE_C_FLAGS} " )
+add_definitions( -std=c99 -Werror )
 
-add_definitions(-std=c99)
+# GNU
+add_definitions( -D_XOPEN_SOURCE=500 )
+######
+
+# debug
+add_definitions( "-O0 -s -g3" )
+######
 
 include_directories("./src")
 SET(EXECUTABLE_OUTPUT_PATH ".")
 
 add_executable(cursebook
 
+	pi.c
+	types.c
 	ui.c
 	thread.c
+	console.c
+	fb.c
 
 	main.c
 )

@@ -1,21 +1,22 @@
 #ifndef UI_H
 #define UI_H
 
-#define UI_ANCHORS_NONE 0
-#define UI_ANCHOR_LEFT 1
-#define UI_ANCHOR_RIGHT 2
-#define UI_ANCHOR_TOP 4
-#define UI_ANCHOR_BOTTOM 8
+#include "config.h"
+
+#include "types.h"
 
 #include <stdint.h>
+#include <ncurses.h>
 
 typedef struct uiblock {
 
-	uint8_t anchors;
-
+	box_t box;
+	
 	struct curseblock **children;
 	uint16_t children_count;
 	struct curseblock *parent;
+	
+	WINDOW *window;
 
 } uiblock_t;
 
@@ -23,7 +24,10 @@ void ui_init();
 void ui_shutdown();
 void ui_warn(char *);
 
-uiblock_t *uiblock_create();
+uiblock_t *uiblock_create(box_t);
 void uiblock_destroy(uiblock_t *);
+
+void uiblock_resize(uiblock_t *,box_t);
+
 
 #endif

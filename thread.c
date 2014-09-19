@@ -22,9 +22,10 @@ thread_t *thread_begin(void (*thread_func)(thread_t *),void *param) {
 			thread_pool=malloc(sizeof(thread_t *));
 		else thread_pool=realloc(thread_pool,sizeof(thread_t *)*(threads_count+1));
 		thread_pool[threads_count]=malloc(sizeof(thread_t));
-
+		
 		thread_t *ret=thread_pool[threads_count];
-
+		memset(ret,0,sizeof(thread_t));
+		
 		ret->param=param;
 		ret->thread_func=thread_func;
 
@@ -46,28 +47,32 @@ thread_t *thread_begin(void (*thread_func)(thread_t *),void *param) {
 }
 
 void thread_end(thread_t *thread) {
-	for (int i=0;i<threads_count;i++) {
-		if (thread_pool[i]==thread) {
-			free(thread_pool[i]);
-			while (i<threads_count) {
-				thread_pool[i]=thread_pool[i+1];
-				i++;
-			}
-			threads_count--;
-			if (threads_count>0)
-				thread_pool=realloc(thread_pool,sizeof(thread_t *)*threads_count);
-			else {
-				free(thread_pool);
-				thread_pool=NULL;
-			}
-			break;
-		}
-	}
+	thread->flags|=THREAD_FLAG_SHUTDOWN;
 }
 
-void threads_wait() {
+void threads_maintain() {
 	while (threads_count>0) {
-		usleep(100000);
+		
+		for (int i=0;i<threads_count;i++) {
+			if (hasflag(thread_pool[i]->flags,THREAD_FLAG_SHUTDOWN)) {
+				pthread_join(thread_pool[i]->pthread,NULL);
+				free(thread_pool[i]);
+				int ii=i;
+				while (ii<threads_count-1) {
+					thread_pool[ii]=thread_pool[ii+1];
+					ii++;
+				}
+				threads_count--;
+				if (threads_count>0)
+					thread_pool=realloc(thread_pool,sizeof(thread_t *)*threads_count);
+				else {
+					free(thread_pool);
+					thread_pool=NULL;
+				}
+			}
+		}
+		
+		pi_usleep(100000);
 	}
 }
 

@@ -3,13 +3,16 @@
 
 #include "ui.h"
 #include "thread.h"
+#include "console.h"
 
 int main() {
 
 	ui_init();
+	console_init();
 
-	threads_wait();
+	threads_maintain();
 
+	console_shutdown();
 	ui_shutdown();
 
 	return EXIT_SUCCESS;
