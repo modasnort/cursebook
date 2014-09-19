@@ -9,8 +9,12 @@
 
 #include "thread.h"
 
-#define UIBLOCK_FLAG_REDRAW 1
-#define UIBLOCK_FLAG_DESTROY 2
+#define UI_EVENT_REALIGN 1
+#define UI_EVENT_REDRAW 2
+
+#define UIBLOCK_FLAG_REALIGN 1
+#define UIBLOCK_FLAG_REDRAW 2
+#define UIBLOCK_FLAG_DESTROY 4
 
 typedef struct uiblock {
 
@@ -26,16 +30,18 @@ typedef struct uiblock {
 	
 	mutex_t mutex;
 	
+	void *(*callback)(uint8_t,struct uiblock *);
 } uiblock_t;
 
 void ui_init();
 void ui_shutdown();
 void ui_warn(char *);
 
-uiblock_t *uiblock_create(box_t);
+uiblock_t *uiblock_create(void *(*callback)(uint8_t,uiblock_t *));
 void uiblock_destroy(uiblock_t *);
 
-void uiblock_resize(uiblock_t *,box_t);
+void uiblock_resize(uiblock_t *);
 
+extern int16_t screen_width,screen_height;
 
 #endif

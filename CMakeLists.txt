@@ -20,6 +20,7 @@ add_executable(cursebook
 	types.c
 	ui.c
 	thread.c
+	input.c
 	console.c
 	fb.c
 
