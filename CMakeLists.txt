@@ -9,7 +9,15 @@ add_definitions(-std=c99)
 include_directories("./src")
 SET(EXECUTABLE_OUTPUT_PATH ".")
 
-add_executable(cursebook main.c)
+add_executable(cursebook
 
-# target_link_libraries(cursebook "  ")
+	ui.c
+	thread.c
+
+	main.c
+)
+
+SET( LIBRARIES "-lncurses -lpthread" )
+
+target_link_libraries(cursebook "${LIBRARIES}" )
 
