@@ -19,9 +19,9 @@ typedef struct box {
 } box_t;
 box_t t_box(coord_t,coord_t,coord_t,coord_t);
 
-#define hasflag(_var,_flag) (_var|_flag==_var)
+#define hasflag(_var,_flag) ((_var&_flag)==_flag)
 #define setflag(_var,_flag) (_var|=_flag)
-#define unsetflag(_var,_flag) (_var&=!_flag)
+#define unsetflag(_var,_flag) (_var&=~_flag)
 
 #endif
 

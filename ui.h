@@ -2,12 +2,15 @@
 #define UI_H
 
 #include "config.h"
-
 #include "types.h"
 
 #include <curses.h>
-
 #include <stdint.h>
+
+#include "thread.h"
+
+#define UIBLOCK_FLAG_REDRAW 1
+#define UIBLOCK_FLAG_DESTROY 2
 
 typedef struct uiblock {
 
@@ -18,7 +21,11 @@ typedef struct uiblock {
 	struct curseblock *parent;
 	
 	WINDOW *window;
-
+	
+	uint8_t flags;
+	
+	mutex_t mutex;
+	
 } uiblock_t;
 
 void ui_init();
