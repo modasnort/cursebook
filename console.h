@@ -6,7 +6,10 @@
 void console_init();
 void console_shutdown();
 
-void console_log(char *text);
+void log_s_needlock(char *,uint8_t);
+
+void log_s(char *);
+void log_eoln();
 
 #endif
 

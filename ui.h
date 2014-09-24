@@ -20,9 +20,9 @@ typedef struct uiblock {
 
 	box_t box;
 	
-	struct curseblock **children;
+	struct uiblock **children;
 	uint16_t children_count;
-	struct curseblock *parent;
+	struct uiblock *parent;
 	
 	WINDOW *window;
 	
@@ -37,9 +37,17 @@ void ui_init();
 void ui_shutdown();
 void ui_warn(char *);
 
+void uiblock_event(uint8_t,uiblock_t *);
+void uiblock_event_recursive(uint8_t,uiblock_t *);
+
 uiblock_t *uiblock_create(void *(*callback)(uint8_t,uiblock_t *));
 void uiblock_destroy(uiblock_t *);
 
+void uiblock_setparent(uiblock_t *,uiblock_t *);
+
+void uiblock_lock(uiblock_t *);
+void uiblock_unlock(uiblock_t *);
+void uiblock_redraw(uiblock_t *);
 void uiblock_resize(uiblock_t *);
 
 extern int16_t screen_width,screen_height;
